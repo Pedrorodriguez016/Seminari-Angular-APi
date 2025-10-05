@@ -29,7 +29,6 @@ export async function createEvento(req: Request, res: Response): Promise<Respons
       participantes: participantesIds as any
     });
 
-    // ✅ sincroniza en bloque el lado de usuario
     if (participantesIds.length > 0) {
       await Usuario.updateMany(
         { _id: { $in: participantesIds } },
@@ -37,7 +36,6 @@ export async function createEvento(req: Request, res: Response): Promise<Respons
       ).exec();
     }
 
-    // ✅ devolvemos el evento poblado para que el front vea nombres
     const populated = await Evento.findById(created._id)
       .populate('participantes', 'username gmail')
       .exec();
@@ -72,11 +70,9 @@ export async function deleteEventoById(req: Request, res: Response): Promise<Res
   try {
     const { id } = req.params;
 
-    // buscamos participantes para limpiar
     const toDelete = await Evento.findById(id).lean().exec();
     if (!toDelete) return res.status(404).json({ message: 'EVENTO NO ENCONTRADO' });
 
-    // ✅ pull del eventId en todos los usuarios participantes
     if (Array.isArray(toDelete.participantes) && toDelete.participantes.length > 0) {
       await Usuario.updateMany(
         { _id: { $in: toDelete.participantes } },
