@@ -50,4 +50,45 @@ export class UserService {
     }
     return updatedUser;
   }
+
+  /* Login */
+  async loginUser(username: string, password: string): Promise<IUsuario | null> {
+    try {
+      const user = await Usuario.findOne({ username });
+      if (!user) {
+        return null;
+      }
+      
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        return null;
+      }
+      
+      return user;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  /* Create default admin user */
+  async createAdminUser(): Promise<void> {
+    try {
+      const adminExists = await Usuario.findOne({ username: 'admin' });
+      if (!adminExists) {
+        const adminUser = new Usuario({
+          username: 'admin',
+          gmail: 'admin@example.com',
+          password: 'admin',
+          birthday: new Date('2000-01-01')
+        });
+        await adminUser.save();
+        console.log('Usuario admin creado exitosamente');
+      } else {
+        console.log('Usuario admin ya existe');
+      }
+    } catch (error) {
+      console.error('Error creando usuario admin:', error);
+    }
+  }
+
 }

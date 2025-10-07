@@ -109,3 +109,46 @@ export async function addEventToUser(req: Request, res: Response): Promise<Respo
     return res.status(400).json({ message: (error as Error).message });
   }
 }
+  /* Auxiliar function to eliminate the password of the user object */
+function removePassword(user: any) {
+  const userObj = user.toObject();
+  delete userObj.password;
+  return userObj;
+}
+
+/* Login */
+export async function loginUser(req: Request, res: Response): Promise<Response> {
+  console.log('login usuario');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
+  try {
+    const { username, password } = req.body;
+    
+    const user = await userService.loginUser(username, password);
+    if (!user) {
+      return res.status(401).json({ 
+        message: 'CREDENCIALES INCORRECTAS' 
+      });
+    }
+
+    return res.status(200).json({
+      message: 'LOGIN EXITOSO',
+      user: removePassword(user)
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'ERROR EN EL LOGIN' });
+  }
+}
+
+/* Create admin only development */
+export async function createAdminUser(req: Request, res: Response): Promise<Response> {
+  try {
+    await userService.createAdminUser();
+    return res.status(200).json({ message: 'Usuario admin verificado/creado' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error con usuario admin' });
+  }
+}

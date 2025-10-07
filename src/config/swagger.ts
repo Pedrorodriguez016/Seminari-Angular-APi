@@ -10,12 +10,10 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000/api', 
+        url: 'http://localhost:3000/api-doc', 
       },
     ],
   },
-  //aqui solo hace falta explicar que apis y rutas se llaman: se puede poner una ruta concreta o todas las rutas de una carpeta
-  //apis: ['./src/routes/*.ts'],
   apis: [
     './src/routes/usuarioRoutes.ts',
     './src/routes/eventoRoutes.ts'
