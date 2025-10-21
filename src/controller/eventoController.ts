@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { EventoService } from '../services/eventoServices';
 import { Usuario } from '../models/usuario';
-import { Evento } from '../models/evento';
+import { Evento, IEvento } from '../models/evento';
 
 const eventoService = new EventoService();
 
@@ -84,5 +84,21 @@ export async function deleteEventoById(req: Request, res: Response): Promise<Res
     return res.status(200).json(deleted);
   } catch (error) {
     return res.status(400).json({ message: (error as Error).message });
+  }
+}
+export async function updateEventoById(req: Request, res: Response): Promise<Response> {
+  try {
+    const { id } = req.params;
+    const eventData: Partial<IEvento> = req.body;
+
+    const updatedEvent = await eventoService.updateEventoById(id, eventData);
+    if (!updatedEvent) {
+      return res.status(404).json({ message: 'Evento no encontrado' });
+    }
+
+    return res.status(200).json(updatedEvent);
+  } catch (error) {
+    console.error('Error actualizando evento:', error);
+    return res.status(500).json({ message: 'Error interno al actualizar el evento' });
   }
 }

@@ -14,4 +14,13 @@ export class EventoService {
   async deleteEventoById(id: string): Promise<IEvento | null> {
     return await Evento.findByIdAndDelete(id);
   }
+  async updateEventoById(id: string, data: Partial<IEvento>): Promise<IEvento | null> {
+  try {
+    const updated = await Evento.findByIdAndUpdate(id, data, { new: true });
+    return updated;
+  } catch (error) {
+    console.error('Error en updateEventoById:', error);
+    throw new Error('Error actualizando evento');
+  }
+}
 }

@@ -3,7 +3,8 @@ import {
   createEvento,
   getAllEventos,
   getEventoById,
-  deleteEventoById
+  deleteEventoById,
+  updateEventoById
 } from '../controller/eventoController';
 
 const router = Router();
@@ -116,5 +117,7 @@ router.get('/:id', getEventoById);
  *         description: Evento no encontrado
  */
 router.delete('/:id', deleteEventoById);
+
+router.put('/:id', updateEventoById);
 
 export default router;
